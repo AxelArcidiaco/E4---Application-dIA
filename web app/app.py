@@ -13,6 +13,8 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import requests
 
+
+# Création de la web app Flask et configuration de la base de données
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
 app.config["SECRET_KEY"] = "42isTheAnswer"  # Nécessaire pour les sessions

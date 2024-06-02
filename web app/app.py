@@ -2,9 +2,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
-# from tensorflow.keras.models import load_model
-# from tensorflow.keras.preprocessing.image import img_to_array, load_img
-import numpy as np
 import requests
 
 app = Flask(__name__)
@@ -13,10 +10,6 @@ app.config["SECRET_KEY"] = "42isTheAnswer"  # Nécessaire pour les sessions
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 db = SQLAlchemy(app)
-
-# # Load the trained models
-# vgg16_model = load_model("VGG16-model-classification-maladie-retine.h5")
-# inceptionv3_model = load_model("InceptionV3-model-classification-maladie-retine.h5")
 
 # Définition du modèle de la base de données
 class User(db.Model):
@@ -86,26 +79,6 @@ def upload():
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-
-# Route classify n'utilisant pas l'api
-# @app.route('/classify', methods=['POST'])
-# def classify():
-#     if 'uploaded_image' not in session:
-#         return jsonify({'result': 'Aucune image chargée'})
-#     image_path = session['uploaded_image']
-#     image = load_img(image_path, target_size=(150, 150))
-#     image = img_to_array(image)
-#     image = np.expand_dims(image, axis=0)
-#     image = image / 255.0
-
-#     # You can choose which model to use for classification
-#     prediction = vgg16_model.predict(image)
-#     class_idx = np.argmax(prediction[0])
-#     class_labels = ["Normal", "CNV", "DME", "Drusen"]
-
-#     result = class_labels[class_idx]
-#     return jsonify({'result': result})
 
 @app.route('/classify', methods=['POST'])
 def classify():

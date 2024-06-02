@@ -6,13 +6,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="web app/static/main.css">
 </head>
+
+<header>
+    <div class="container">
+        <div class="row m-4">
+            <div class="col-10 content-justify-center">
+                <h1>OCT-Classifier</h1>
+            </div>
+            <div class="col-2 content-justify-end">
+                <button class="btn btn-danger" onclick="window.location.href='/logout'">Déconnexion</button>
+            </div>
+        </div>
+    </div>
+</header>
 
 <body>
     <div class="container">
-        <h1>Page d'accueil</h1>
-        <!-- Contenu de la page d'accueil -->
+        <div class="row content-justify-start m-4">
+            <h1>Page d'accueil</h1>
+        </div>
+        <div class="row content-justify-start m-4">
+            <p>Bienvenue dans l'application OCT-Classifier.</p>
+            <p>
+                Cette application a pour but de classifier une image d'OCT afin de déterminer si un patient a ou non une
+                maladie des yeux. Les classes possibles sont :
+            </p>
+            <ul>
+                <li>Normal</li>
+                <li>CNV : la dégénérescence maculaire liée à l'âge</li>
+                <li>
+                    DRUSEN : la dégénérescence maculaire liée à l'âge présentant des drusen cuticulaires et des
+                    pseudodrusen réticulaires
+                </li>
+                <li>DME : l'œdème maculaire lié au diabète</li>
+            </ul>
+            <p>
+                Pour utiliser cette application, cliquez sur le bouton charger une image afin de charger une image
+                obtenue par imagerie OCT puis appuyez sur le bouton classifier pour obtenir un résultat.
+            </p>
+        </div>
+        <div class="row content-justify-center m-4">
+            <div class="col-6">
+                <div class="row" style="display: none;">
+                    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                        <input type="file" id="imageInput" name="image" class="hidden" accept="image/*">
+                    </form>
+                </div>
+
+                <div class="image-display" id="imageDisplay" name="imageDisplay">
+                    {% if image_url %}
+                    <img src="{{ image_url }}" alt="Uploaded Image" style="max-width:100%; max-height:100%;">
+                    {% else %}
+                    Zone d'affichage de l'image chargée par l'utilisateur
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="row m-4">
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="btnLoad" name="btnLoad">Charger une image</button>
+                        <button class="btn btn-success" id="btnClassify" name="btnClassify">Classifier une
+                            image</button>
+                    </div>
+                </div>
+                <div class="row m-4">
+                    <div class="result-display" id="resultDisplay" name="resultDisplay">
+                        Zone d'affichage des résultats de classification
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Script JS -->
+    <script>
+        document.getElementById('btnLoad').addEventListener('click', function () {
+            document.getElementById('imageInput').click();
+        });
+
+        document.getElementById('imageInput').addEventListener('change', function () {
+            document.getElementById('uploadForm').submit();
+        });
+
+        document.getElementById('btnClassify').addEventListener('click', function () {
+            fetch('/classify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const resultDisplay = document.getElementById('resultDisplay');
+                    resultDisplay.innerHTML = 'Résultat de classification : ' + data.result;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
 </body>
+
+<footer>
+    <div class="container">
+        <div class="row justify-content-center m-4">
+            <h4>Copyright Axel Arcidiaco - 2024</h4>
+        </div>
+    </div>
+</footer>
 
 </html>

@@ -29,7 +29,7 @@ async def classify_image(file: UploadFile = File(...)):
     image = np.expand_dims(image, axis=0)
     image = image / 255.0
 
-    # Vous pouvez choisir quel modèle utiliser pour la classification
+    # Classification de l'image
     prediction = vgg16_model.predict(image)
     class_idx = np.argmax(prediction[0])
     class_labels = ["Normal", "CNV", "DME", "Drusen"]
